@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 type UrlMapper struct {
 	shortUrlTokenToUrl map[string]string
 	generator          *Generator
@@ -14,11 +16,12 @@ func NewUrlMapper(generator Generator, maxCapacity int) *UrlMapper {
 	}
 }
 
-func (u *UrlMapper) GenerateShortUrlToken(originalUrl string) (shortUrlToken string) {
+func (u *UrlMapper) GenerateShortUrlToken(originalUrl string) (string, error) {
 	if u.isAtMaxCapacity() {
-		return
+		return "", errors.New("not enough space to generate token")
 	}
 
+	var shortUrlToken string
 	for {
 		shortUrlToken = (*u.generator).GenerateSequence()
 
@@ -28,7 +31,7 @@ func (u *UrlMapper) GenerateShortUrlToken(originalUrl string) (shortUrlToken str
 		}
 	}
 
-	return
+	return shortUrlToken, nil
 }
 
 func (u *UrlMapper) GetUrlByShortUrl(shortUrl string) string {

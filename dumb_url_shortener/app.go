@@ -39,9 +39,9 @@ func (a *App) createShortUrl(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	host := r.Host
-	token := a.Mapper.GenerateShortUrlToken(requestBody.OriginalUrl)
-	if token == "" {
-		respondWithError(w, http.StatusInternalServerError, "We are at max capacity. Come back later!")
+	token, err := a.Mapper.GenerateShortUrlToken(requestBody.OriginalUrl)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
